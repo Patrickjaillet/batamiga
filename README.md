@@ -293,6 +293,19 @@ CMD=<package> BATCH_MODE=1 make amiga500only-build
 Output image:
 `output/amiga500only/images/batocera/images/x86_64/batocera-x86_64-44-*.img`
 
+### Verifying a build
+
+Before flashing, run the offline checks:
+
+```bash
+scripts/verify-image.sh output/amiga500only/images/batocera/images/x86_64/batocera-x86_64-44-*.img
+```
+
+It confirms the systems present, the default emulator, Amiberry + AROS,
+the injected presets, and that the image ships no games or Kickstart.
+Hardware tests that need a real boot are listed in
+[docs/test-checklist.md](docs/test-checklist.md).
+
 ---
 
 ## Repository layout
