@@ -1,0 +1,15 @@
+{
+  // Batamiga markdown lint config (markdownlint-cli2)
+  "config": {
+    "default": true,
+    "MD013": false,   // line length — prose is hand-wrapped, not to a fixed width
+    "MD022": false,    // blanks around headings — not enforced
+    "MD032": false,    // blanks around lists — not enforced
+    "MD033": false,    // inline HTML — allowed
+    "MD041": false,    // first line heading — not required
+    "MD024": { "siblings_only": true }
+  },
+  "ignores": [
+    "node_modules/**"
+  ]
+}

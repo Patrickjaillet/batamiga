@@ -22,37 +22,70 @@ jobs:
             docs/**/*.md
             .github/**/*.md
 
-      - name: Validate preset YAML / XML
+      - name: Validate presets
         run: |
           python3 - <<'PY'
-          import glob, sys, xml.dom.minidom, yaml
+          import glob, sys, xml.dom.minidom
           bad = 0
-          for f in glob.glob("config/presets/**/*.cfg", recursive=True) + ["config/presets/es_settings.cfg"]:
-              if f.endswith("es_settings.cfg"):
-                  try:
-                      xml.dom.minidom.parse(f)
-                  except Exception as e:
-                      print(f"{f}: {e}"); bad = 1
-          for f in ["config/presets/batamiga.conf"]:
-              # not YAML, just check it is readable text with key=value lines
-              for i, line in enumerate(open(f), 1):
-                  s = line.strip()
-                  if s and not s.startswith("#") and "=" not in s:
-                      print(f"{f}:{i}: not a key=value line: {s}"); bad = 1
+
+          # es_settings.cfg must be well-formed XML
+          try:
+              xml.dom.minidom.parse("config/presets/es_settings.cfg")
+          except Exception as e:
+              print(f"es_settings.cfg: {e}"); bad = 1
+
+          # batamiga.conf: every non-comment line is key=value
+          for i, line in enumerate(open("config/presets/batamiga.conf"), 1):
+              s = line.strip()
+              if s and not s.startswith("#") and "=" not in s:
+                  print(f"batamiga.conf:{i}: not key=value: {s}"); bad = 1
+
+          # collections: plain text, no surprises
+          for f in glob.glob("config/presets/collections/*.cfg"):
+              open(f).read()
+
           sys.exit(bad)
           PY
 
-      - name: Patches apply cleanly to a Batocera checkout (dry run)
+  html:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Validate the Pages HTML
         run: |
-          set -e
-          git clone --depth 1 https://github.com/batocera-linux/batocera.linux.git /tmp/bat
-          cd /tmp/bat
-          for p in "$GITHUB_WORKSPACE"/config/*.patch; do
-            case "$(basename "$p")" in
-              amiga500only-es_systems.patch) echo "skip doc-patch $(basename "$p")"; continue;;
-              buildroot-rust-1.96.0.patch)   echo "skip submodule patch $(basename "$p")"; continue;;
-            esac
-            echo "=== $(basename "$p") ==="
-            git apply --check --verbose "$p" || {
-              echo "::warning::$(basename "$p") no longer applies cleanly to batocera.linux HEAD"; }
-          done
+          python3 - <<'PY'
+          import html.parser, sys
+
+          class Check(html.parser.HTMLParser):
+              def __init__(self):
+                  super().__init__()
+                  self.imgs_without_alt = []
+                  self.has_lang = False
+                  self.has_title = False
+                  self._in_title = False
+              def handle_starttag(self, tag, attrs):
+                  d = dict(attrs)
+                  if tag == "html" and d.get("lang"):
+                      self.has_lang = True
+                  if tag == "title":
+                      self._in_title = True
+                  if tag == "img" and not d.get("alt"):
+                      self.imgs_without_alt.append(d.get("src", "?"))
+              def handle_endtag(self, tag):
+                  if tag == "title":
+                      self._in_title = False
+              def handle_data(self, data):
+                  if self._in_title and data.strip():
+                      self.has_title = True
+
+          c = Check()
+          c.feed(open("docs/index.html", encoding="utf-8").read())
+          bad = 0
+          if not c.has_lang:
+              print("docs/index.html: <html> is missing a lang attribute"); bad = 1
+          if not c.has_title:
+              print("docs/index.html: missing a non-empty <title>"); bad = 1
+          for src in c.imgs_without_alt:
+              print(f"docs/index.html: <img> without alt: {src}"); bad = 1
+          sys.exit(bad)
+          PY

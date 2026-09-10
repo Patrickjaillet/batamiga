@@ -1,8 +1,0 @@
-{
-  // Batamiga markdown lint config
-  "default": true,
-  "MD013": false,   // line length — prose is wrapped by hand, not to a fixed width
-  "MD033": false,   // inline HTML — allowed
-  "MD041": false,   // first line heading — not required
-  "MD024": { "siblings_only": true }  // duplicate headings ok across sections (CHANGELOG)
-}

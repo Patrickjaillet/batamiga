@@ -2,7 +2,7 @@
 
 Batamiga is a personal project. External contributions are not being
 solicited, but notes and bug reports are welcome by e-mail:
-sandefjord.development@proton.me
+<sandefjord.development@proton.me>
 
 ## If you build on it
 

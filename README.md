@@ -101,7 +101,7 @@ upside-down panel: `Menu` -> *System settings* -> *Display*, or edit
 
 Copy files into the matching system folder on the **SHARE** partition:
 
-```
+```text
 /userdata/roms/amiga500/
 /userdata/roms/amiga1200/
 /userdata/roms/amigacd32/
@@ -153,7 +153,7 @@ example via **[Amiga Forever](https://www.amigaforever.com/)**.
 
 Copy them into the following folder on the SHARE partition:
 
-```
+```text
 /userdata/bios/amiga/
 ```
 
@@ -297,7 +297,7 @@ Output image:
 
 ## Repository layout
 
-```
+```text
 Batamiga/
 ├── README.md           # this file
 ├── CHANGELOG.md         # Keep a Changelog + SemVer
@@ -320,8 +320,8 @@ Batamiga/
 Copyright (c) 2026 Patrick JAILLET. All rights reserved. See
 [LICENSE](LICENSE).
 
-- E-mail: sandefjord.development@proton.me
-- Web: https://patrickjaillet.github.io/batamiga
+- E-mail: <sandefjord.development@proton.me>
+- Web: <https://patrickjaillet.github.io/batamiga>
 
-Batocera Linux, RetroArch and libretro-puae are the property of their
+Batocera Linux, RetroArch, PUAE and Amiberry are the property of their
 respective authors and ship under their own licenses.
