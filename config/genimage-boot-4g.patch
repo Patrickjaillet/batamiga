@@ -1,0 +1,13 @@
+diff --git a/board/batocera/x86/genimage-boot.cfg b/board/batocera/x86/genimage-boot.cfg
+index 2a3dccaf9f..e7cfadecee 100644
+--- a/board/batocera/x86/genimage-boot.cfg
++++ b/board/batocera/x86/genimage-boot.cfg
+@@ -3,7 +3,7 @@ image boot.vfat {
+         extraargs = "-F 32 -n BATOCERA"
+         @files
+     }   
+-    size = 10G
++    size = 4G
+     mountpoint = "/"
+ }
+ 

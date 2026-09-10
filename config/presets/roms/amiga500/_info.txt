@@ -1,0 +1,14 @@
+Batamiga — Amiga 500 (OCS/ECS)
+
+Put your Amiga 500 games here on the SHARE partition:
+  /userdata/roms/amiga500/
+
+Formats: .adf .adz .dms .ipf .hdf .lha .zip .m3u .uae .scp .raw
+Multi-disk games: list the disks in a .m3u file (one per line).
+
+Default emulator: libretro/puae (PUAE). Amiberry is also available:
+in EmulationStation, open a game -> Options -> Emulator -> Amiberry.
+
+Kickstart: copy a legally obtained Kickstart 1.3 (kick34005.A500) into
+  /userdata/bios/amiga/
+AROS (open source, no ROM needed) is bundled and works out of the box.

@@ -1,0 +1,12 @@
+diff --git a/package/batocera/gpu/gtk-layer-shell/Config.in b/package/batocera/gpu/gtk-layer-shell/Config.in
+index e37997b42b..7b9e902141 100644
+--- a/package/batocera/gpu/gtk-layer-shell/Config.in
++++ b/package/batocera/gpu/gtk-layer-shell/Config.in
+@@ -1,6 +1,7 @@
+ config BR2_PACKAGE_GTK_LAYER_SHELL
+ 	bool "gtk-layer-shell"
+ 	select BR2_PACKAGE_LIBGTK3
++	select BR2_PACKAGE_WAYLAND
+ 	help
+ 	  A library to create panels and other desktop components 
+ 	  for Wayland using the Layer Shell protocol.

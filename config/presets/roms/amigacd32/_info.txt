@@ -1,0 +1,19 @@
+Batamiga — Amiga CD32
+
+Put your CD32 disc images here on the SHARE partition:
+  /userdata/roms/amigacd32/
+
+Formats: .iso .cue (+ .bin) .chd .nrg
+One disc per game; use a .m3u for multi-disc titles.
+
+Default emulator: libretro/puae (PUAE), CD32 model with Fast RAM.
+Amiberry is available too: open a game -> Options -> Emulator -> Amiberry.
+
+Kickstart: copy a legally obtained Kickstart 3.1 plus the CD32 extended
+ROM into /userdata/bios/amiga/
+  kick40060.CD32
+  kick40060.CD32.ext
+The bundled AROS ROM does NOT cover CD32 — a real CD32 Kickstart is
+required for this system.
+
+Controller: a 7-button CD32 pad is emulated on port 1 by default.

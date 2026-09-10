@@ -1,0 +1,13 @@
+diff --git a/package/batocera/core/batocera-system/Config.in b/package/batocera/core/batocera-system/Config.in
+index 1262768e34..969b6bda78 100644
+--- a/package/batocera/core/batocera-system/Config.in
++++ b/package/batocera/core/batocera-system/Config.in
+@@ -321,7 +321,7 @@ config BR2_PACKAGE_BATOCERA_SYSTEM
+ 	select BR2_PACKAGE_RYZENADJ				if BR2_PACKAGE_BATOCERA_TARGET_X86_64_ANY # ryzen apu configuration
+ 	select BR2_PACKAGE_RYZEN_SMU			if BR2_PACKAGE_RYZENADJ # ryzen smu kernel module
+ 	select BR2_PACKAGE_SYNCTHING				# sync files across multiple batoceras
+-	select BR2_PACKAGE_RCLONE				if BR2_PACKAGE_BATOCERA_TARGET_X86_64_ANY # sync files in the cloud (require x86_64)
++#BATAMIGA-DISABLED (build cassé upstream, dep Go rclone/ProtonMail invalide) 	select BR2_PACKAGE_RCLONE				if BR2_PACKAGE_BATOCERA_TARGET_X86_64_ANY # sync files in the cloud (require x86_64)
+ 	select BR2_PACKAGE_BTOP					# htop alternative
+ 	select BR2_PACKAGE_MOKUTIL				if BR2_PACKAGE_BATOCERA_TARGET_X86_64_ANY # mokutil machine owner key utility
+     select BR2_PACKAGE_CRYPTSETUP				# LUKS encrypted volume userland support

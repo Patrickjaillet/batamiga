@@ -1,0 +1,27 @@
+# Internal working documents — not published
+ROADMAP.md
+CLAUDE.md
+.claude/
+
+# Build output and images (large binaries)
+/image/
+/build/
+*.img
+*.img.gz
+*.img.xz
+*.squashfs
+*.sha256
+*.md5
+
+# Scratch / logs
+*.log
+scripts.zip
+
+# OS / editor cruft
+.DS_Store
+Thumbs.db
+desktop.ini
+*~
+*.swp
+.vscode/
+.idea/

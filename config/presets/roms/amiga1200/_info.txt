@@ -1,0 +1,13 @@
+Batamiga — Amiga 1200 (AGA)
+
+Put your Amiga 1200 / AGA games here on the SHARE partition:
+  /userdata/roms/amiga1200/
+
+Formats: .adf .adz .dms .ipf .hdf .lha .zip .m3u .uae .scp .raw
+AGA WHDLoad sets (.lha / .hdf) belong here too.
+
+Default emulator: libretro/puae (PUAE). For AGA WHDLoad and cycle-exact
+timing, Amiberry often does better: open a game -> Options -> Emulator.
+
+Kickstart: copy a legally obtained Kickstart 3.1 (kick40068.A1200) into
+  /userdata/bios/amiga/

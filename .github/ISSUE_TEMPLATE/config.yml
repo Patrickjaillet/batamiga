@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Batocera documentation
+    url: https://wiki.batocera.org/systems:amiga500
+    about: General Amiga-on-Batocera questions (formats, Kickstart names, options).
+  - name: E-mail the author
+    url: mailto:sandefjord.development@proton.me
+    about: Anything that is not a reproducible bug.

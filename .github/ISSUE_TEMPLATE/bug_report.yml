@@ -1,0 +1,46 @@
+name: Bug report
+description: Something in the image or the build does not work as expected.
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Batamiga is a personal project. Bug reports are welcome; support is
+        best-effort. Please do not attach or link Kickstart ROMs or games.
+  - type: input
+    id: version
+    attributes:
+      label: Image version
+      description: From `batocera.version` on the boot partition, or the release tag.
+      placeholder: v1.1.0
+    validations:
+      required: true
+  - type: dropdown
+    id: area
+    attributes:
+      label: Area
+      options:
+        - Booting / flashing
+        - A specific Amiga system or game
+        - Emulator (PUAE / Amiberry)
+        - Controls / mapping
+        - Scraping / metadata
+        - Network / share / SSH
+        - Building the image
+        - Other
+    validations:
+      required: true
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened
+      description: What you did, what you expected, what you got.
+    validations:
+      required: true
+  - type: textarea
+    id: hardware
+    attributes:
+      label: Hardware
+      description: PC model, CPU, GPU, the USB drive used.
+    validations:
+      required: false

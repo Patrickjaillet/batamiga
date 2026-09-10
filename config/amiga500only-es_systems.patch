@@ -1,0 +1,47 @@
+Modification locale de es_systems.yml pour le projet Batamiga.
+
+Cible :
+package/batocera/emulationstation/batocera-es-system/es_systems.yml
+
+But : ne garder que les systemes Amiga pertinents pour ce projet.
+libretro-puae declare supporter amiga500, amiga1200, amigacd32 et
+amigacdtv ; le generateur d'es_systems.cfg ne filtre pas par systeme,
+seulement par cœur compile. On retire donc directement la definition
+du seul systeme non voulu :
+
+  - amiga500  : conserve
+  - amiga1200 : conserve  (Amiga AGA, rajoute le 2026-09-10)
+  - amigacd32 : conserve  (rajoute le 2026-09-10)
+  - amigacdtv : RETIRE     (bloc supprime du yml)
+
+Historique : une version anterieure de ce patch retirait aussi
+amiga1200 et amigacd32 (projet initialement "Amiga 500 uniquement").
+Ils ont ete restaures a la demande le 2026-09-10 ; seul amigacdtv
+reste exclu.
+
+Diff (git) — suppression du seul bloc amigacdtv, entre amigacd32 et nes :
+
+--- a/package/batocera/emulationstation/batocera-es-system/es_systems.yml
++++ b/package/batocera/emulationstation/batocera-es-system/es_systems.yml
+@@ amigacd32 ... @@
+     libretro:
+       puae:     { requireAnyOf: [BR2_PACKAGE_LIBRETRO_PUAE] }
+       uae4arm:  { requireAnyOf: [BR2_PACKAGE_LIBRETRO_UAE4ARM] }
+-
+-amigacdtv:
+-  name:       Amiga CDTV
+-  manufacturer: Commodore
+-  release: 1991
+-  hardware: console
+-  extensions:   [bin, cue, iso, chd, m3u]
+-  emulators:
+-    fsuae:
+-      CDTV:     { requireAnyOf: [BR2_PACKAGE_FSUAE]         }
+-    amiberry:
+-      CDTV:     { requireAnyOf: [BR2_PACKAGE_AMIBERRY] }
+-    libretro:
+-      puae:     { requireAnyOf: [BR2_PACKAGE_LIBRETRO_PUAE] }
+-      uae4arm:  { requireAnyOf: [BR2_PACKAGE_LIBRETRO_UAE4ARM] }
+
+ nes:
+   name:       Nintendo Entertainment System

@@ -1,0 +1,45 @@
+include batocera-x86_64.board
+
+### Batamiga — Batocera reduit a l'emulation Amiga (500 / 1200 / CD32) ###
+### Le suffixe "amiga500only" du nom de cible est historique.            ###
+
+# Coupe l'interrupteur maitre qui active tous les emulateurs par defaut
+# BR2_PACKAGE_BATOCERA_ALL_SYSTEMS is not set
+
+# RetroArch (frontend requis par le core PUAE) + le core Amiga lui-meme.
+# PUAE reste l'emulateur PAR DEFAUT (simple, leger).
+BR2_PACKAGE_BATOCERA_RETROARCH=y
+BR2_PACKAGE_LIBRETRO_PUAE=y
+
+# Amiberry : 2e moteur Amiga (WHDLoad natif, AGA fine, cycle-exact, CD32
+# complet). Fournit aussi AROS (aros-rom.bin/aros-ext.bin) = Kickstart
+# open source -> boot possible sans ROM Cloanto. Dependances tirees
+# automatiquement (SDL3 + stack multimedia, pas de Wayland/X).
+# NB : les entrees "amiberry:" sont deja dans es_systems.yml pour
+# amiga500/1200/cd32 ; verifier apres build que PUAE reste "default".
+# NB2 : amiberry/Config.in a un bug upstream (libpcap/libcurl/
+# json-for-modern-cpp dans _DEPENDENCIES sans select) -> corrige dans le
+# clone, patch config/amiberry-deps-select.patch. Meme classe que le fix
+# gtk-layer-shell de la Phase 5.
+BR2_PACKAGE_AMIBERRY=y
+
+# libcapsimage : support des disquettes .ipf (format de preservation Amiga).
+# Fait partie du bloc COMPUTER_SYSTEMS qu'on ne selectionne pas -> a
+# ajouter explicitement, sinon PUAE affiche "CAPS library
+# 'libcapsimage.so.5' not found!" au boot et ne lit pas les .ipf.
+BR2_PACKAGE_LIBCAPSIMAGE=y
+
+# Kodi n'est pas necessaire pour un usage Amiga-only et son support VAAPI
+# exige Wayland (desactive ci-dessus) -> le retirer plutot que de
+# reintroduire Wayland juste pour lui
+# BR2_PACKAGE_BATOCERA_KODI21 is not set
+
+# NB : BATOCERA_BEZEL_OVERLAY ne peut PAS etre desactive ici — il est
+# force par un "select" inconditionnel de batocera-configgen (paquet
+# essentiel). Il tire une chaine Wayland -> gtk-layer-shell -> libva
+# qui a necessite deux correctifs upstream appliques dans le clone
+# batocera.linux (pas dans ce fichier) :
+#  - package/batocera/gpu/gtk-layer-shell/Config.in : ajout du
+#    "select BR2_PACKAGE_WAYLAND" manquant
+#  - libva reconstruit avec support Wayland (CMD=libva-reconfigure)
+# Voir ROADMAP.md, section Phase 5, pour le detail.

@@ -1,0 +1,58 @@
+name: checks
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Markdown lint
+        uses: DavidAnson/markdownlint-cli2-action@v16
+        with:
+          globs: |
+            *.md
+            docs/**/*.md
+            .github/**/*.md
+
+      - name: Validate preset YAML / XML
+        run: |
+          python3 - <<'PY'
+          import glob, sys, xml.dom.minidom, yaml
+          bad = 0
+          for f in glob.glob("config/presets/**/*.cfg", recursive=True) + ["config/presets/es_settings.cfg"]:
+              if f.endswith("es_settings.cfg"):
+                  try:
+                      xml.dom.minidom.parse(f)
+                  except Exception as e:
+                      print(f"{f}: {e}"); bad = 1
+          for f in ["config/presets/batamiga.conf"]:
+              # not YAML, just check it is readable text with key=value lines
+              for i, line in enumerate(open(f), 1):
+                  s = line.strip()
+                  if s and not s.startswith("#") and "=" not in s:
+                      print(f"{f}:{i}: not a key=value line: {s}"); bad = 1
+          sys.exit(bad)
+          PY
+
+      - name: Patches apply cleanly to a Batocera checkout (dry run)
+        run: |
+          set -e
+          git clone --depth 1 https://github.com/batocera-linux/batocera.linux.git /tmp/bat
+          cd /tmp/bat
+          for p in "$GITHUB_WORKSPACE"/config/*.patch; do
+            case "$(basename "$p")" in
+              amiga500only-es_systems.patch) echo "skip doc-patch $(basename "$p")"; continue;;
+              buildroot-rust-1.96.0.patch)   echo "skip submodule patch $(basename "$p")"; continue;;
+            esac
+            echo "=== $(basename "$p") ==="
+            git apply --check --verbose "$p" || {
+              echo "::warning::$(basename "$p") no longer applies cleanly to batocera.linux HEAD"; }
+          done

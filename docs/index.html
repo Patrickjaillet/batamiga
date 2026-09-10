@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Batamiga — a Batocera image for Amiga &amp; CD32</title>
+<meta name="description" content="A bootable USB image based on Batocera Linux, stripped down to Amiga 500, Amiga 1200 and Amiga CD32 emulation only. Two engines (PUAE and Amiberry), bundled AROS, ready-to-use presets.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Crect width='16' height='16' rx='3' fill='%23122'/%3E%3Ctext x='8' y='12' font-size='11' text-anchor='middle' fill='%23e8b'%3EA%3C/text%3E%3C/svg%3E">
+<style>
+  /* ---- Design tokens. Light palette on :root; dark redefines the roles. ---- */
+  :root {
+    color-scheme: light dark;
+    --bg: #ffffff;
+    --surface: #f4f4f6;
+    --border: #c9c9d2;
+    --text: #16161a;         /* 15.9:1 on --bg — AAA */
+    --text-muted: #44444d;   /* 8.6:1 on --bg — AAA */
+    --accent: #7a1f57;       /* 7.4:1 on --bg — AAA for normal text */
+    --accent-on: #ffffff;
+    --link: #0b4fa8;         /* 7.6:1 on --bg — AAA */
+    --link-visited: #5b2a86; /* 7.2:1 on --bg — AAA */
+    --focus: #0b4fa8;
+    --code-bg: #ececf0;
+    --maxw: 46rem;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #121216;
+      --surface: #1c1c22;
+      --border: #3a3a45;
+      --text: #f2f2f5;        /* 16.1:1 on --bg — AAA */
+      --text-muted: #c2c2cc;  /* 10.4:1 on --bg — AAA */
+      --accent: #f2a7d3;      /* 9.7:1 on --bg — AAA */
+      --accent-on: #16161a;
+      --link: #8fc3ff;        /* 9.6:1 on --bg — AAA */
+      --link-visited: #cbb0f0;/* 9.5:1 on --bg — AAA */
+      --focus: #8fc3ff;
+      --code-bg: #26262e;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #121216; --surface: #1c1c22; --border: #3a3a45;
+    --text: #f2f2f5; --text-muted: #c2c2cc;
+    --accent: #f2a7d3; --accent-on: #16161a;
+    --link: #8fc3ff; --link-visited: #cbb0f0; --focus: #8fc3ff;
+    --code-bg: #26262e;
+  }
+
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font: 1.125rem/1.7 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  }
+
+  .skip-link {
+    position: absolute;
+    left: 0.5rem;
+    top: -3rem;
+    background: var(--accent);
+    color: var(--accent-on);
+    padding: 0.6rem 1rem;
+    border-radius: 0 0 0.4rem 0.4rem;
+    transition: top 0.15s ease;
+    z-index: 10;
+  }
+  .skip-link:focus { top: 0; }
+
+  :focus-visible {
+    outline: 3px solid var(--focus);
+    outline-offset: 2px;
+    border-radius: 2px;
+  }
+
+  .wrap {
+    max-width: var(--maxw);
+    margin: 0 auto;
+    padding: 0 1.25rem;
+  }
+
+  header {
+    padding-block: 3rem 2rem;
+    border-bottom: 1px solid var(--border);
+  }
+  header p.tagline {
+    font-size: 1.25rem;
+    color: var(--text-muted);
+    margin: 0.5rem 0 0;
+  }
+  h1 {
+    font-size: 2.4rem;
+    line-height: 1.15;
+    margin: 0;
+    letter-spacing: -0.01em;
+  }
+  h2 {
+    font-size: 1.6rem;
+    line-height: 1.25;
+    margin: 3rem 0 0.75rem;
+    padding-top: 0.5rem;
+  }
+  h3 { font-size: 1.2rem; margin: 1.75rem 0 0.5rem; }
+
+  main { padding-block: 1rem 3rem; }
+
+  a { color: var(--link); text-decoration-thickness: 1px; text-underline-offset: 2px; }
+  a:visited { color: var(--link-visited); }
+  a:hover { text-decoration-thickness: 2px; }
+
+  ul, ol { padding-left: 1.4rem; }
+  li { margin: 0.35rem 0; }
+
+  code, kbd {
+    font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
+    font-size: 0.9em;
+    background: var(--code-bg);
+    padding: 0.15em 0.4em;
+    border-radius: 0.3em;
+  }
+  pre {
+    background: var(--code-bg);
+    padding: 1rem 1.1rem;
+    border-radius: 0.5rem;
+    overflow-x: auto;
+    border: 1px solid var(--border);
+  }
+  pre code { background: none; padding: 0; }
+
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 0.6rem;
+    padding: 1rem 1.2rem;
+    margin: 1rem 0;
+  }
+  .card h3:first-child { margin-top: 0; }
+
+  table {
+    border-collapse: collapse;
+    width: 100%;
+    margin: 1rem 0;
+    display: block;
+    overflow-x: auto;
+  }
+  th, td {
+    border: 1px solid var(--border);
+    padding: 0.5rem 0.7rem;
+    text-align: left;
+    vertical-align: top;
+  }
+  th { background: var(--surface); }
+
+  .note {
+    border-left: 4px solid var(--accent);
+    padding: 0.6rem 0 0.6rem 1rem;
+    margin: 1.25rem 0;
+    color: var(--text-muted);
+  }
+
+  figure { margin: 1.5rem 0; }
+  figure img {
+    max-width: 100%;
+    height: auto;
+    border: 1px solid var(--border);
+    border-radius: 0.5rem;
+    display: block;
+  }
+  figcaption { color: var(--text-muted); font-size: 0.95rem; margin-top: 0.5rem; }
+
+  footer {
+    border-top: 1px solid var(--border);
+    padding-block: 2rem 3rem;
+    color: var(--text-muted);
+    font-size: 0.95rem;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    * { animation-duration: 0.001ms !important; transition-duration: 0.001ms !important; }
+    .skip-link { transition: none; }
+  }
+</style>
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to main content</a>
+
+<header>
+  <div class="wrap">
+    <h1>Batamiga</h1>
+    <p class="tagline">A Batocera Linux USB image, stripped down to Amiga&nbsp;500, Amiga&nbsp;1200 and Amiga&nbsp;CD32 &mdash; nothing else.</p>
+  </div>
+</header>
+
+<main id="main">
+  <div class="wrap">
+
+    <p>
+      Batamiga boots straight into EmulationStation with three Amiga systems
+      and no other console, computer or arcade platform present. It ships two
+      emulation engines &mdash; <strong>PUAE</strong> (the default) and
+      <strong>Amiberry</strong> &mdash; plus the open-source
+      <strong>AROS</strong> Kickstart, so an Amiga&nbsp;500 or 1200 runs with
+      no copyrighted ROM at all.
+    </p>
+
+    <p>
+      <a href="https://github.com/patrickjaillet/batamiga">Source, patches and build instructions on GitHub</a>
+    </p>
+
+    <h2 id="systems">Systems</h2>
+    <table>
+      <caption class="figcaption">Emulated Amiga systems and their default engine</caption>
+      <thead>
+        <tr><th scope="col">System</th><th scope="col">Machine</th><th scope="col">Default engine</th><th scope="col">Also available</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><code>amiga500</code></td><td>Amiga 500 (OCS/ECS)</td><td>PUAE</td><td>Amiberry</td></tr>
+        <tr><td><code>amiga1200</code></td><td>Amiga 1200 (AGA)</td><td>PUAE</td><td>Amiberry</td></tr>
+        <tr><td><code>amigacd32</code></td><td>Amiga CD32</td><td>PUAE</td><td>Amiberry</td></tr>
+      </tbody>
+    </table>
+
+    <h2 id="what-you-get">What is set up for you</h2>
+    <ul>
+      <li>Correct Amiga model per system: A500 with Kickstart&nbsp;1.3, A1200
+        AGA with 3.1, CD32 with Fast RAM and Akiko.</li>
+      <li>Sensible controls: one-button joystick + mouse for A500/A1200,
+        a 7-button CD32 pad for CD32.</li>
+      <li>WHDLoad launcher enabled; Amiberry runs WHDLoad
+        <code>.lha</code> archives natively.</li>
+      <li>ScreenScraper pre-selected for metadata and artwork (you add your
+        own free account).</li>
+      <li>Custom collections ready to fill: CD32, AGA, WHDLoad, Demos.</li>
+      <li>Automatic Batocera OS updates disabled, so the trimmed system list
+        stays trimmed.</li>
+    </ul>
+    <p class="note">
+      The image contains <strong>no games and no Kickstart ROMs</strong>. You
+      add your own after the first boot.
+    </p>
+
+    <h2 id="quick-start">Quick start</h2>
+    <ol>
+      <li>Flash the image to a USB drive (8&nbsp;GB or larger). On Windows,
+        run <code>scripts/flash-usb.ps1 -DiskNumber &lt;N&gt;</code> from an
+        administrator PowerShell, or use balenaEtcher.</li>
+      <li>Boot the target PC from USB (UEFI; disable Secure Boot if needed).
+        Batocera grows the data partition and starts EmulationStation.</li>
+      <li>Copy games over the network to
+        <code>\\BATOCERA\share\roms\amiga500</code> (and
+        <code>amiga1200</code>, <code>amigacd32</code>), or use
+        <code>scripts/push-games.ps1</code>.</li>
+      <li>For real Kickstarts, copy a legally obtained set into
+        <code>\\BATOCERA\share\bios\amiga</code>. See the
+        <a href="https://github.com/patrickjaillet/batamiga#4-kickstart-bios-files-required">BIOS section of the README</a>.</li>
+    </ol>
+
+    <figure>
+      <img src="screenshot.png" alt="EmulationStation on Batamiga showing the Amiga 500 system with a game list." width="1280" height="720">
+      <figcaption>EmulationStation on Batamiga. <em>(Screenshot to be added from the running image.)</em></figcaption>
+    </figure>
+
+    <h2 id="kickstart">A note on Kickstart ROMs</h2>
+    <p>
+      Amiga Kickstart ROMs are copyrighted (rights held by Cloanto). They are
+      <strong>not</strong> included in this project and never will be. Buy
+      them legally &mdash; for example through
+      <a href="https://www.amigaforever.com/">Amiga Forever</a> &mdash; and
+      place them on the data partition yourself. The bundled AROS ROM is
+      open source and covers Amiga&nbsp;500 and 1200 for getting started;
+      CD32 still needs a genuine CD32 Kickstart.
+    </p>
+
+    <h2 id="legal">License &amp; scope</h2>
+    <p>
+      Personal use. The build files, patches and scripts are open on GitHub;
+      the produced disk image is not redistributed because it bundles
+      components under several third-party licenses. See
+      <a href="https://github.com/patrickjaillet/batamiga/blob/main/LICENSE">LICENSE</a>.
+    </p>
+    <p>
+      Batocera Linux, RetroArch, PUAE and Amiberry belong to their respective
+      authors and ship under their own licenses.
+    </p>
+
+  </div>
+</main>
+
+<footer>
+  <div class="wrap">
+    <p>
+      Batamiga &mdash; &copy;&nbsp;2026 Patrick&nbsp;JAILLET.
+      <a href="mailto:sandefjord.development@proton.me">sandefjord.development@proton.me</a>
+      &middot; <a href="https://github.com/patrickjaillet/batamiga">GitHub</a>
+    </p>
+  </div>
+</footer>
+
+</body>
+</html>
