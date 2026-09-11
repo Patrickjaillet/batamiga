@@ -1,0 +1,62 @@
+# Batamiga game database — metadata only, no ROMs, no hashes that would
+# defeat any protection. One entry maps a filename PATTERN (a regex
+# matched against the ROM's base name, case-insensitive) to suggested
+# settings. The first matching pattern wins; entries are tried in order.
+#
+# Fields (all optional except "match"):
+#   match       regex against the rom basename (without extension)
+#   system      restrict this entry to one Batamiga system
+#   core        "libretro" or "amiberry"
+#   model       Amiga model tag (puae_model value, or an amiberry model)
+#   controller  controller1_puae value (see puae.libretro.core.yml), or
+#               "cd32pad" as an amiberry-friendly shorthand
+#   whdload     true if this is a WHDLoad-installed title
+#   notes       free text, shown to the user, never executed
+#
+# This file ships with a handful of illustrative, well-known freeware/PD
+# entries. Extend it with scripts/build-gamedb.py from public DAT/CSV
+# sources (openretro, whdload.de, RetroArch DAT) — metadata only.
+
+entries:
+  # --- CD32 pad games benefit from the real CD32 controller mapping ---
+  - match: "chuck ?rock|leander|liberation|diggers|oscar"
+    system: amigacd32
+    controller: cd32pad
+    notes: "CD32-native title, use the emulated CD32 pad."
+
+  # --- AGA-only titles: force the AGA model even if filed under amiga1200 generically ---
+  - match: "\\(aga\\)|super ?stardust|breathless"
+    system: amiga1200
+    model: A1200
+    notes: "AGA-specific chipset features."
+
+  # --- WHDLoad hard-disk installs ---
+  - match: "\\[whdload\\]|whdload"
+    whdload: true
+    core: amiberry
+    notes: "WHDLoad install — runs best under Amiberry's native whdboot."
+
+  # --- Multi-disk trainers/demos that need faster floppy access ---
+  - match: "\\(disk 1 of|\\.m3u$"
+    notes: "Multi-disk title — make sure the companion .m3u lists every disk."
+
+  # --- Classic 1MB A500+ titles that need extra chip RAM ---
+  - match: "\\(a500\\+\\)|\\b512k? ?chip ?\\+ ?512k? ?ext\\b"
+    system: amiga500
+    model: A500PLUS
+    notes: "Needs the extra 512K chip RAM of the A500+."
+
+fallback_heuristics:
+  # Used only when no explicit entry matches. Documented, not hardcoded
+  # magic: keep this list in sync with scripts/amiga-autoconf.sh.
+  - tag: "(AGA)"
+    applies_to: [amiga1200]
+    set: { model: A1200 }
+  - tag: "(CD32)"
+    applies_to: [amigacd32]
+    set: { controller: cd32pad }
+  - tag: "[WHDLoad]"
+    set: { core: amiberry, whdload: true }
+  - extension: ".chd"
+    applies_to: [amigacd32]
+    set: { puae_cd_turbo: false }

@@ -1,0 +1,10 @@
+# Batamiga — expected Kickstart SHA1 hashes, for filename detection only.
+#
+# This file contains ONLY hashes and canonical filenames. It never
+# contains ROM data, and matching a hash never unlocks anything — it is
+# purely informational, to tell the user "this looks like Kickstart 1.3"
+# when they import files from their own USB drive. Populate this table
+# from published, widely-cited checksums (e.g. the Batocera / WHDLoad
+# wikis) as needed; it ships empty by default.
+#
+# Format: <sha1>  <canonical filename>

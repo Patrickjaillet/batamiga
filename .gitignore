@@ -16,6 +16,8 @@ CLAUDE.md
 # Scratch / logs
 *.log
 scripts.zip
+__pycache__/
+*.pyc
 
 # OS / editor cruft
 .DS_Store
